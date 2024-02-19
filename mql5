@@ -1,0 +1,86 @@
+
+//+------------------------------------------------------------------+
+//|                                        Perfect Scalp.mq5          |
+//|                  Copyright 2021, Forex Robot Easy Team      |
+//|                                 http://www.forexroboteasy.com |
+//+------------------------------------------------------------------+
+
+//--- input parameters
+input string Symbol1 = 'GBPUSD';       // Symbol 1
+input string Symbol2 = 'GBPJPY';       // Symbol 2
+input string Symbol3 = 'USDCHF';       // Symbol 3
+input string Symbol4 = 'EURAUD';       // Symbol 4
+input string Symbol5 = 'EURUSD';       // Symbol 5
+input string Symbol6 = 'EURCHF';       // Symbol 6
+input ENUM_TIMEFRAME Timeframe = PERIOD_M5;   // Timeframe for scalping strategy
+
+//--- stop loss and take profit levels
+input int StopLoss = 50;       // Stop loss level (in pips)
+input int TakeProfit = 100;    // Take profit level (in pips)
+
+//+------------------------------------------------------------------+
+//| Expert initialization function                                   |
+//+------------------------------------------------------------------+
+int OnInit()
+{
+   //--- check if all necessary symbols are available
+   if(!SymbolSelect(Symbol1) || !SymbolSelect(Symbol2) || !SymbolSelect(Symbol3) ||
+      !SymbolSelect(Symbol4) || !SymbolSelect(Symbol5) || !SymbolSelect(Symbol6))
+   {
+      Print('Error: Some symbols are not available');
+      return INIT_FAILED;
+   }
+
+   //--- set stop loss and take profit levels for all symbols
+   for(int i=0; i<SymbolsTotal(); i++)
+   {
+      SymbolInfoInteger(SymbolName(i), SYMBOL_TRADE_STOPS_LEVEL, StopLoss);
+      SymbolInfoInteger(SymbolName(i), SYMBOL_TRADE_FREEZE_LEVEL, TakeProfit);
+   }
+
+   return INIT_SUCCEEDED;
+}
+
+//+------------------------------------------------------------------+
+//| Expert deinitialization function                                 |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+{
+   //--- perform necessary actions before termination
+}
+
+//+------------------------------------------------------------------+
+//| Expert tick function                                             |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+   //--- perform scalping strategy on each symbol
+   for(int i=0; i<SymbolsTotal(); i++)
+   {
+      if(SymbolName(i) == Symbol1 || SymbolName(i) == Symbol2 || SymbolName(i) == Symbol3 ||
+         SymbolName(i) == Symbol4 || SymbolName(i) == Symbol5 || SymbolName(i) == Symbol6)
+      {
+         //--- perform scalping strategy for the current symbol
+         PerformScalpingStrategy(SymbolName(i));
+      }
+   }
+}
+
+//+------------------------------------------------------------------+
+//| Perform scalping strategy for a given symbol                     |
+//+------------------------------------------------------------------+
+void PerformScalpingStrategy(const string symbol)
+{
+   //--- perform entry and exit logic for scalping strategy
+   //... (Add your scalping strategy code here)
+
+   //--- calculate stop loss and take profit levels
+   double stopLossPrice = NormalizeDouble(SymbolInfoDouble(symbol, SYMBOL_BID) - (StopLoss * SymbolInfoDouble(symbol, SYMBOL_POINT)), SymbolInfoInteger(symbol, SYMBOL_DIGITS));
+   double takeProfitPrice = NormalizeDouble(SymbolInfoDouble(symbol, SYMBOL_BID) + (TakeProfit * SymbolInfoDouble(symbol, SYMBOL_POINT)), SymbolInfoInteger(symbol, SYMBOL_DIGITS));
+
+   //--- place pending orders with calculated stop loss and take profit levels
+   //... (Add your pending order placement code here)
+
+   //--- perform necessary actions after order execution
+   //... (Add your order execution handling code here)
+}
